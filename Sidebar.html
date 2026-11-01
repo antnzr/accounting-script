@@ -1,0 +1,478 @@
+<!doctype html>
+<html>
+
+<head>
+  <base target="_top" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #202124;
+      font-size: 14px;
+    }
+
+    h3 {
+      margin: 6px 0;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 5px 0;
+      border-bottom: 1px solid #e8eaed;
+    }
+
+    .label {
+      color: #5f6368;
+      font-size: 11px;
+      margin: 0;
+    }
+
+    .amount {
+      font-size: 14px;
+      font-weight: 600;
+      overflow-wrap: anywhere;
+      text-align: right;
+    }
+
+    .balance {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 0;
+    }
+
+    #refreshButton {
+      display: block;
+      width: 100%;
+      padding: 7px 10px;
+      margin: 4px 0 4px;
+      border: none;
+      border-radius: 4px;
+      background: #1a73e8;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    #refreshButton:hover:not(:disabled) {
+      background: #1765cc;
+    }
+
+    #refreshButton:disabled {
+      background: #a1c2fa;
+      cursor: wait;
+    }
+
+    #refreshButton:focus-visible {
+      outline: 2px solid #174ea6;
+      outline-offset: 2px;
+    }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: auto;
+      font-size: 10px;
+    }
+
+    th,
+    td {
+      padding: 4px 2px;
+      border-bottom: 1px solid #e8eaed;
+      text-align: right;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    th {
+      background: #f8f9fa;
+      color: #5f6368;
+      font-size: 9px;
+      font-weight: 600;
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left;
+      padding-left: 2px;
+    }
+
+    .positive {
+      color: #188038;
+    }
+
+    .negative {
+      color: #d93025;
+    }
+
+    /* Category month selector */
+    label[for="categoryMonth"] {
+      display: block;
+      margin: 0 0 3px;
+      color: #5f6368;
+      font-size: 11px;
+    }
+
+    #categoryMonth {
+      display: block;
+      width: 100%;
+      margin: 0 0 6px;
+      padding: 5px 6px;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      background: #fff;
+      color: #202124;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+    }
+
+    #categoryMonth:focus-visible {
+      outline: 2px solid #1a73e8;
+      outline-offset: 1px;
+    }
+
+    #categoryMonth:disabled {
+      color: #5f6368;
+      background: #f8f9fa;
+    }
+
+    #status {
+      margin-top: 6px;
+      color: #5f6368;
+      font-size: 10px;
+    }
+
+    .expense-amount {
+      color: #b85c5c;
+    }
+
+    .income-amount {
+      color: #39805a;
+    }
+
+    /* Section cards */
+    .card {
+      margin: 0 0 4px;
+      padding: 6px;
+      border: 1px solid #e8eaed;
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    .card h3 {
+      margin: 0 0 4px;
+    }
+
+    /* Keep the totals section compact */
+    .card .balance {
+      padding: 6px 0 2px;
+    }
+
+    /* Tables should fit neatly inside cards */
+    .card table {
+      margin-top: 2px;
+    }
+
+    /* Avoid excess space beneath the last section */
+    .card:last-of-type {
+      margin-bottom: 0;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="card">
+    <h3>Overall totals</h3>
+
+    <div class="item">
+      <span class="label">Expenses</span>
+      <span class="amount expense-amount" id="expenses">—</span>
+    </div>
+
+    <div class="item">
+      <span class="label">Income</span>
+      <span class="amount income-amount" id="income">—</span>
+    </div>
+
+    <div class="balance">
+      <span>Balance</span>
+      <span id="balance">—</span>
+    </div>
+
+    <button id="refreshButton" onclick="refreshSummary()">
+			Refresh totals
+		</button>
+  </div>
+
+  <div class="card">
+    <h3>Monthly breakdown</h3>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Expenses</th>
+            <th>Income</th>
+            <th>Balance</th>
+          </tr>
+        </thead>
+        <tbody id="monthlyRows"></tbody>
+      </table>
+    </div>
+  </div>
+  </div>
+
+  <div class="card">
+    <h3>Expenses by category</h3>
+
+    <select id="categoryMonth" disabled>
+			<option value="">No months available</option>
+		</select>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Expenses</th>
+            <th>Share</th>
+          </tr>
+        </thead>
+        <tbody id="categoryRows"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="status">Ready</div>
+
+  <script>
+    const numberFormat = new Intl.NumberFormat(undefined, {
+				maximumFractionDigits: 2,
+			});
+
+			const percentageFormat = new Intl.NumberFormat(undefined, {
+				maximumFractionDigits: 2,
+			});
+
+			let loading = false;
+			let summaryData = null;
+
+			function formatAmount(value) {
+				return numberFormat.format(value);
+			}
+
+			function setBalanceStyle(element, value) {
+				element.classList.remove("positive", "negative");
+
+				if (value > 0) {
+					element.classList.add("positive");
+				} else if (value < 0) {
+					element.classList.add("negative");
+				}
+			}
+
+			function makeCell(text, alignLeft = false) {
+				const td = document.createElement("td");
+				td.textContent = text;
+
+				if (alignLeft) {
+					td.style.textAlign = "left";
+				}
+
+				return td;
+			}
+
+			function showEmptyRow(tbody, message, columnCount) {
+				const tr = document.createElement("tr");
+				const td = document.createElement("td");
+
+				td.colSpan = columnCount;
+				td.textContent = message;
+				td.style.textAlign = "left";
+
+				tr.appendChild(td);
+				tbody.appendChild(tr);
+			}
+
+			function renderMonthlyRows() {
+				const tbody = document.getElementById("monthlyRows");
+				tbody.replaceChildren();
+
+				if (!summaryData || summaryData.months.length === 0) {
+					showEmptyRow(tbody, "No dated transactions found.", 4);
+					return;
+				}
+
+				for (const month of summaryData.months) {
+					const tr = document.createElement("tr");
+
+					tr.appendChild(makeCell(month.month, true));
+          const expenseCell = makeCell(formatAmount(month.expenses));
+          expenseCell.classList.add("expense-amount");
+          tr.appendChild(expenseCell);
+
+          const incomeCell = makeCell(formatAmount(month.income));
+          incomeCell.classList.add("income-amount");
+          tr.appendChild(incomeCell);
+
+					const balanceCell = makeCell(formatAmount(month.balance));
+					setBalanceStyle(balanceCell, month.balance);
+					tr.appendChild(balanceCell);
+
+					tbody.appendChild(tr);
+				}
+			}
+
+			function renderCategoryMonthOptions(previousKey) {
+				const select = document.getElementById("categoryMonth");
+				select.replaceChildren();
+
+				const months = summaryData ? summaryData.months : [];
+
+				if (months.length === 0) {
+					const option = document.createElement("option");
+					option.value = "";
+					option.textContent = "No months available";
+					select.appendChild(option);
+					select.disabled = true;
+					return;
+				}
+
+				for (const month of months) {
+					const option = document.createElement("option");
+					option.value = month.key;
+					option.textContent = month.month;
+					select.appendChild(option);
+				}
+
+				select.disabled = false;
+
+				const previousMonthExists = months.some(
+					(month) => month.key === previousKey,
+				);
+
+				// Months are sorted newest first.
+				select.value = previousMonthExists ? previousKey : months[0].key;
+			}
+
+			function renderCategories() {
+				const tbody = document.getElementById("categoryRows");
+				tbody.replaceChildren();
+
+				const selectedKey = document.getElementById("categoryMonth").value;
+
+				const month = summaryData?.months.find(
+					(item) => item.key === selectedKey,
+				);
+
+				if (!month) {
+					showEmptyRow(tbody, "No monthly data available.", 3);
+					return;
+				}
+
+				if (month.categories.length === 0) {
+					showEmptyRow(tbody, "No expenses recorded for this month.", 3);
+					return;
+				}
+
+				for (const category of month.categories) {
+					const tr = document.createElement("tr");
+
+					tr.appendChild(makeCell(category.tag, true));
+					const expenseCell = makeCell(formatAmount(category.expenses));
+          expenseCell.classList.add("expense-amount");
+          tr.appendChild(expenseCell);
+					tr.appendChild(
+						makeCell(percentageFormat.format(category.percentage) + "%"),
+					);
+
+					tbody.appendChild(tr);
+				}
+			}
+
+			function renderSummary(data) {
+				summaryData = data;
+
+				document.getElementById("expenses").textContent = formatAmount(
+					data.expenses,
+				);
+
+				document.getElementById("income").textContent = formatAmount(
+					data.income,
+				);
+
+				const balanceElement = document.getElementById("balance");
+				balanceElement.textContent = formatAmount(data.balance);
+				setBalanceStyle(balanceElement, data.balance);
+
+				renderMonthlyRows();
+
+				const select = document.getElementById("categoryMonth");
+				const previousKey = select.value;
+
+				renderCategoryMonthOptions(previousKey);
+				renderCategories();
+			}
+
+			function refreshSummary() {
+				if (loading) return;
+
+				loading = true;
+
+				const button = document.getElementById("refreshButton");
+				button.disabled = true;
+				button.textContent = "Refreshing…";
+
+				document.getElementById("status").textContent = "Calculating…";
+
+				google.script.run
+					.withSuccessHandler((data) => {
+						renderSummary(data);
+
+						document.getElementById("status").textContent =
+							"Updated: " + new Date().toLocaleTimeString();
+
+						loading = false;
+						button.disabled = false;
+						button.textContent = "Refresh totals";
+					})
+					.withFailureHandler((error) => {
+						document.getElementById("status").textContent =
+							"Error: " + (error.message || "Unable to load summary.");
+
+						loading = false;
+						button.disabled = false;
+						button.textContent = "Try again";
+					})
+					.getSummary();
+			}
+
+			document
+				.getElementById("categoryMonth")
+				.addEventListener("change", renderCategories);
+
+			refreshSummary();
+  </script>
+</body>
+
+</html>

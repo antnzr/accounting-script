@@ -1,0 +1,40 @@
+# ==========================================
+# Google Clasp Specific
+# ==========================================
+# IMPORTANT: Never commit your local credentials or script ID to a public repo.
+.clasp.json
+clasp.json
+credentials.json
+
+# ==========================================
+# Node.js / Dependencies
+# ==========================================
+# Exclude npm dependencies if you use typescript or local linters
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ==========================================
+# Development Tools & Editor Settings
+# ==========================================
+# IDE settings (VS Code, WebStorm)
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# ==========================================
+# OS Generated Files
+# ==========================================
+# System files that your OS creates automatically
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
