@@ -1,0 +1,32 @@
+{
+	"name": "accounting-script",
+	"version": "1.0.0",
+	"description": "Personal accounting scripts for Google Sheets",
+	"main": "index.js",
+	"engines": {
+		"node": ">=26 <27"
+	},
+	"scripts": {
+		"check-types": "tsc --noEmit",
+		"build": "node scripts/prepare-build.mjs && tsc -p tsconfig.json",
+		"deploy": "pnpm run build && clasp push",
+		"push": "clasp push",
+		"pull": "clasp pull"
+	},
+	"keywords": [],
+	"author": "Anton Nazarenko",
+	"license": "ISC",
+	"devEngines": {
+		"packageManager": {
+			"name": "pnpm",
+			"version": "12.16.1",
+			"onFail": "download"
+		}
+	},
+	"packageManager": "pnpm@12.16.1",
+	"type": "module",
+	"devDependencies": {
+		"@types/google-apps-script": "^2.0.14",
+		"typescript": "^7.0.2"
+	}
+}

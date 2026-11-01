@@ -1,0 +1,33 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "ES2022",
+		"moduleResolution": "Bundler",
+		"lib": ["ES2022"],
+
+		/* Strict Type-Checking Options */
+		"strict": true,
+		"noImplicitAny": true,
+		"strictNullChecks": true,
+		"strictFunctionTypes": true,
+		"noImplicitThis": true,
+		"alwaysStrict": true,
+
+		/* Additional Checks */
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+
+		/* Clasp & pnpm Integration */
+		"experimentalDecorators": true,
+		"types": ["google-apps-script"],
+		"typeRoots": [
+			"./node_modules/@types"
+		] /* Helps TypeScript find types in pnpm structure */,
+		"rootDir": ".",
+		"outDir": "./build"
+	},
+	"include": ["*.ts"],
+	"exclude": ["build", "node_modules"]
+}
